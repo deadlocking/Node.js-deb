@@ -7,5 +7,5 @@ Download and Install Node.js from .deb package
 
 To download the *.deb* package, go to [***releases***](https://github.com/gustavosotnas/Node.js-deb/releases/latest) section and download the latest version of it. Install with [**GDebi Package Installer**](https://apps.ubuntu.com/cat/applications/gdebi/) or enter the following command in a Terminal (in the folder where is the downloaded file):
 
-`sudo dpkg -i avd-launcher_ver.si.on_arq.deb` <br>
-(replace `ver.si.on` with the downloaded application version number and `arq` with your SO's arquitecture)
+`sudo dpkg -i nodejs-unofficial-stable_ver.si.on_arq.deb` <br>
+(replace `ver.si.on` with the downloaded application version number and `arq` with your SO's architecture)
