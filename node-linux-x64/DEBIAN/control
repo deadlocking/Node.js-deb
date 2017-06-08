@@ -1,5 +1,5 @@
 Package: nodejs-unofficial-stable
-Version: 5.1.0
+Version: 8.0.0
 Source: https://github.com/nodejs/node
 Maintainer: Gustavo Moraes <gustavosotnas1@gmail.com>
 Section: web

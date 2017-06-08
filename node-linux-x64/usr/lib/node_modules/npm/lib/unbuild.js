@@ -12,6 +12,7 @@ var asyncMap = require('slide').asyncMap
 var chain = require('slide').chain
 var log = require('npmlog')
 var build = require('./build.js')
+var output = require('./utils/output.js')
 
 // args is a list of folders.
 // remove any bins/etc, and then delete the folder.
@@ -40,9 +41,7 @@ function unbuild_ (silent) {
           [lifecycle, pkg, 'preuninstall', folder, false, true],
           [lifecycle, pkg, 'uninstall', folder, false, true],
           !silent && function (cb) {
-            log.clearProgress()
-            console.log('unbuild ' + pkg._id)
-            log.showProgress()
+            output('unbuild ' + pkg._id)
             cb()
           },
           [rmStuff, pkg, folder],
@@ -59,7 +58,7 @@ function rmStuff (pkg, folder, cb) {
   // if it's global, and folder is in {prefix}/node_modules,
   // then bins are in {prefix}/bin
   // otherwise, then bins are in folder/../.bin
-  var parent = path.dirname(folder)
+  var parent = pkg.name[0] === '@' ? path.dirname(path.dirname(folder)) : path.dirname(folder)
   var gnm = npm.dir
   var top = gnm === parent
 
@@ -80,7 +79,12 @@ function rmBins (pkg, folder, parent, top, cb) {
     } else {
       gentlyRm(path.resolve(binRoot, b), true, folder, cb)
     }
-  }, cb)
+  }, gentlyRmBinRoot)
+
+  function gentlyRmBinRoot (err) {
+    if (err || top) return cb(err)
+    return gentlyRm(binRoot, true, parent, cb)
+  }
 }
 
 function rmMans (pkg, folder, parent, top, cb) {

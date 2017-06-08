@@ -12,6 +12,10 @@ var npm = require('./npm.js')
 var log = require('npmlog')
 var opener = require('opener')
 var glob = require('glob')
+var cmdList = require('./config/cmd-list').cmdList
+var shorthands = require('./config/cmd-list').shorthands
+var commands = cmdList.concat(Object.keys(shorthands))
+var output = require('./utils/output.js')
 
 function help (args, cb) {
   var argv = npm.config.get('argv').cooked
@@ -34,13 +38,13 @@ function help (args, cb) {
     return npmUsage(valid, cb)
   }
 
-  // npm <cmd> -h: show command usage
+  // npm <command> -h: show command usage
   if (npm.config.get('usage') &&
       npm.commands[section] &&
       npm.commands[section].usage) {
     npm.config.set('loglevel', 'silent')
     log.level = 'silent'
-    console.log(npm.commands[section].usage)
+    output(npm.commands[section].usage)
     return cb()
   }
 
@@ -158,16 +162,15 @@ function htmlMan (man) {
 function npmUsage (valid, cb) {
   npm.config.set('loglevel', 'silent')
   log.level = 'silent'
-  console.log([
+  output([
     '\nUsage: npm <command>',
     '',
     'where <command> is one of:',
     npm.config.get('long') ? usages()
-        : '    ' + wrap(Object.keys(npm.commands)),
+        : '    ' + wrap(commands),
     '',
-    'npm <cmd> -h     quick help on <cmd>',
+    'npm <command> -h     quick help on <command>',
     'npm -l           display full usage info',
-    'npm faq          commonly asked questions',
     'npm help <term>  search for help on <term>',
     'npm help npm     involved overview',
     '',
@@ -182,7 +185,7 @@ function npmUsage (valid, cb) {
 }
 
 function usages () {
-  // return a string of <cmd>: <usage>
+  // return a string of <command>: <usage>
   var maxLen = 0
   return Object.keys(npm.commands).filter(function (c) {
     return c === npm.deref(c)

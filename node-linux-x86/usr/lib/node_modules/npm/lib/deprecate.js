@@ -37,11 +37,15 @@ function deprecate (args, cb) {
   // fetch the data and make sure it exists.
   var p = npa(pkg)
 
+  // npa makes the default spec "latest", but for deprecation
+  // "*" is the appropriate default.
+  var spec = p.rawSpec === '' ? '*' : p.fetchSpec
+
   mapToRegistry(p.name, npm.config, function (er, uri, auth) {
     if (er) return cb(er)
 
     var params = {
-      version: p.spec,
+      version: spec,
       message: msg,
       auth: auth
     }

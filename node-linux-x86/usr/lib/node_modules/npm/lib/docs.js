@@ -1,13 +1,16 @@
 module.exports = docs
 
-docs.usage = 'npm docs <pkgname>' +
-             '\nnpm docs .'
-
 var npm = require('./npm.js')
 var opener = require('opener')
 var log = require('npmlog')
 var fetchPackageMetadata = require('./fetch-package-metadata.js')
+var usage = require('./utils/usage')
 
+docs.usage = usage(
+  'docs',
+  'npm docs <pkgname>' +
+  '\nnpm docs .'
+)
 docs.completion = function (opts, cb) {
   // FIXME: there used to be registry completion here, but it stopped making
   // sense somewhere around 50,000 packages on the registry
@@ -30,7 +33,7 @@ function docs (args, cb) {
 
 function getDoc (project, cb) {
   log.silly('getDoc', project)
-  fetchPackageMetadata(project, '.', function (er, d) {
+  fetchPackageMetadata(project, '.', {fullMetadata: true}, function (er, d) {
     if (er) return cb(er)
     var url = d.homepage
     if (!url) url = 'https://www.npmjs.org/package/' + d.name

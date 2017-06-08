@@ -10,6 +10,7 @@ var ini = require('ini')
 var Umask = configDefs.Umask
 var mkdirp = require('mkdirp')
 var umask = require('../utils/umask')
+var isWindows = require('../utils/is-windows.js')
 
 exports.load = load
 exports.Conf = Conf
@@ -207,7 +208,7 @@ inherits(Conf, CC)
 function Conf (base) {
   if (!(this instanceof Conf)) return new Conf(base)
 
-  CC.apply(this)
+  CC.call(this)
 
   if (base) {
     if (base instanceof Conf) {
@@ -391,7 +392,7 @@ function parseField (f, k) {
   f = envReplace(f)
 
   if (isPath) {
-    var homePattern = process.platform === 'win32' ? /^~(\/|\\)/ : /^~\//
+    var homePattern = isWindows ? /^~(\/|\\)/ : /^~\//
     if (f.match(homePattern) && process.env.HOME) {
       f = path.resolve(process.env.HOME, f.substr(2))
     }
